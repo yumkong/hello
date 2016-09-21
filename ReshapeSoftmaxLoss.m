@@ -50,12 +50,10 @@ classdef ReshapeSoftmaxLoss < dagnn.ElementWise
         c_rev(c == 2) = 1;
         %ci = offset + numPixelsPerImage * max(c - 1,0);
         ci = offset + numPixelsPerImage * max(c_rev - 1,0);
+        % 0921 added to solve the NAN problem found when running rpn_conv4_model net
         t = -log(softmaxY(ci)+eps);
-        %0408 added '/ ***', divide m (# training examples)
-        outputs{1} = mass(:)' * t(:) / (sum(mass(:))+ eps);
-%         if nargin <= 1, return ; end
-%         % backward
-%         Y = Y .* bsxfun(@minus, dzdY, sum(dzdY .* Y, 3)) ;
+        % 0408 added '/ ***', divide m (# training examples)
+        outputs{1} = mass(:)' * t(:) / (sum(mass(:))+ eps);  %'
 
         %liu@0812: 
         n = self.numAveraged ;

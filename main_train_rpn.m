@@ -75,6 +75,7 @@ trainer_handle = @train_ClfReg;
 launch_net(conf_proposal, imdbWider, trainer_handle,'res_0920', gpuID, net);
 end
 
+
 function outdata = prepare_trainval_data(conf, indata)
      %parfor i = 1:length(indata)
      %celldata = struct2cell(indata);
@@ -85,9 +86,6 @@ function outdata = prepare_trainval_data(conf, indata)
      total_num = length(indata);
      outdata1 = cell(total_num, 1);
      for i = 1:total_num
-%         if i == 280
-%           fprintf('watch here.\n');
-%         end
 %         [labels, label_weights, bbox_targets, bbox_loss] = sample_rois(conf, ...
 %                     imdb_single, fg_rois_per_image, rois_per_image, im_scale);
         image_roidb = indata(i);
