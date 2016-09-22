@@ -15,6 +15,8 @@ function launch_net(conf, imdb, net_handle, experimentID, opt_GPUID, preNet, var
     input_opts.expDir = experimentID;
     % 20160510 added
     input_opts.gpus = GPU_ID;
+    %liu:0921 added
+    input_opts.use_conv4 = use_conv4;
 
     % call the net to start the experiment
     % liu@0808: changed

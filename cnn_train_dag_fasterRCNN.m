@@ -27,6 +27,8 @@ opts.weightDecay = 0.0005 ;
 opts.momentum = 0.9 ;
 opts.memoryMapFile = fullfile(tempdir, 'matconvnet.bin') ;
 opts.profile = false ;
+%0921 added
+opts.use_conv4 = false;
 
 %opts.derOutputs = {'objective', 1} ;
 %0612 changed to have multiple objectives
@@ -36,6 +38,11 @@ opts.derOutputs = {'loss_cls', 1, 'loss_bbox', 10} ;
 opts.extractStatsFn = @extractStats ;
 opts.plotStatistics = true;
 opts = vl_argparse(opts, varargin) ;
+
+%0921 added. Currently not sure whether this change is good or bad.
+if opts.use_conv4
+    opts.derOutputs = {'loss_cls', 1, 'loss_bbox', 40} ;
+end
 
 if ~exist(opts.expDir, 'dir'), mkdir(opts.expDir) ; end
 if isempty(opts.train), opts.train = find(imdb.images.set==1) ; end
@@ -243,7 +250,7 @@ for t = 1:opts.batchSize:numel(subset)
   %end
 
   % =========liu@0908: get the result for comparison===============
-  rst = check_error(net.vars);
+  rst = check_error(net.vars, opts.use_conv4);
   %disp(rst);
   % =============================================
   
@@ -288,11 +295,21 @@ net.move('cpu') ;
 %
 
 %  ========liu@0908 added ================
-function rst = check_error(net_vars)
+function rst = check_error(net_vars, use_conv4)
     %rst = struct([]);
-    acc_idx = 31;  % 38 --> 32
-    bbox_idx = 34; % 41 --> 35
-    cls_idx = 30;  % 37 --> 31
+    if use_conv4
+        acc_idx = 31;
+        bbox_idx = 34;
+        cls_idx = 30;
+        label_idx = 29;
+        cls_pred_idx = 27;
+    else
+        acc_idx = 38;  % 38 --> 32
+        bbox_idx = 41; % 41 --> 35
+        cls_idx = 37;  % 37 --> 31
+        label_idx = 36;
+        cls_pred_idx = 34;
+    end
     % accuracy
     rst(1) = struct('blob_name', net_vars(acc_idx).name, 'data', gather(net_vars(acc_idx).value));
     % bbox loss
@@ -300,11 +317,11 @@ function rst = check_error(net_vars)
     % cls loss
     rst(end + 1) = struct('blob_name', net_vars(cls_idx).name, 'data', gather(net_vars(cls_idx).value));
     % fg accuracy and bg accuracy
-    labels = gather(net_vars(29).value(:,:,1));  %36 --> ?
-    labels_weights = gather(net_vars(29).value(:,:,2));  %36 --> ?
+    labels = gather(net_vars(label_idx).value(:,:,1));  %36 --> 29
+    labels_weights = gather(net_vars(label_idx).value(:,:,2));  %36 --> 29
     
     %both prediction and gt are faces
-    tmp_pred = gather(net_vars(27).value);  %34 --> ?
+    tmp_pred = gather(net_vars(cls_pred_idx).value);  %34 --> 27
     tmp_pred = reshape(tmp_pred, size(tmp_pred,1), [], 2);
     acc_fg = (tmp_pred(:,:,1) < tmp_pred(:,:,2)) & (labels == 1);
     %both prediction and gt are nonfaces

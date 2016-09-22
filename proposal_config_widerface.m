@@ -43,7 +43,7 @@ function conf = proposal_config_widerface(varargin)
     ip.addParamValue('use_flipped',     true,           @islogical);
     % Stride in input image pixels at ROI pooling level (network specific)
     % 16 is true for {Alex,Caffe}Net, VGG_CNN_M_1024, and VGG16
-    ip.addParamValue('feat_stride',     8,             @isscalar);  % 0920: 16-->8
+    ip.addParamValue('feat_stride',     16,             @isscalar);  % 0920: 16-->8
     % train proposal target only to labled ground-truths or also include
     % other proposal results (selective search, etc.)
     ip.addParamValue('target_only_gt',  true,           @islogical);
@@ -57,7 +57,7 @@ function conf = proposal_config_widerface(varargin)
     ip.addParamValue('test_max_size',   1500,           @isscalar); %1000
     ip.addParamValue('test_nms',        0.3,            @isscalar);
     ip.addParamValue('test_binary',     false,          @islogical);
-    ip.addParamValue('test_min_box_size',8,            @isscalar);  % 0920: 16-->8
+    ip.addParamValue('test_min_box_size',16,            @isscalar);  % 0920: 16-->8
     ip.addParamValue('test_drop_boxes_runoff_image', ...
                                         false,          @islogical);
     

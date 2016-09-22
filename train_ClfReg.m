@@ -17,6 +17,9 @@ function [net, info] = train_ClfReg(conf, imdb, net, inpt, varargin)
     opts.train.weightDecay = 5 * 1e-4;  % caffe weight decay 0.0005 
     opts.train.momentum = 0.9;
     opts.train.expDir = inpt.expDir;
+    %0921 added
+    opts.train.use_conv4 = inpt.use_conv4;
+    
     %opts.train.savePlots = false;
     %liu@0810: no need to use it, since only one image/ batch
     %opts.train.numSubBatches = 2; % keep this, each subbatch 10/5=2 images

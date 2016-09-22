@@ -11,7 +11,14 @@ dataset      = widerface_all(dataset, 'train', use_flipped);
 dataset      = widerface_all(dataset, 'test', false);
 
 %load proposal configuration file
-conf_proposal = proposal_config_widerface();
+%0921 added
+use_conv4 = true;
+
+if use_conv4
+    conf_proposal = proposal_config_widerface('feat_stride',8, 'test_min_box_size',8);
+else
+    conf_proposal = proposal_config_widerface('feat_stride',16, 'test_min_box_size',16);
+end
 % generate anchors and pre-calculate output size of rpn network 
 model.rpn_cache_name = 'rpn_cache';
 model.premodel_file = 'data/models/imagenet-vgg-verydeep-16.mat';
@@ -24,9 +31,6 @@ if use_gpu
 else
     gpuID = [];
 end 
-
-% liu:0920 added
-use_conv4 = false;
 
 if use_conv4
 	[conf_proposal.anchors, conf_proposal.output_width_map, conf_proposal.output_height_map] ...
@@ -59,13 +63,11 @@ imdbWider.set = cat(1, ones(length(image_roidb_train), 1), 2*ones(length(image_r
 
 %initialize rpn network
 if use_conv4
-	net = rpnInitializeModel_conv4();
+    net = rpnInitializeModel_conv4();
 else
-	net = rpnInitializeModel();
+    net = rpnInitializeModel();
 end
 
-
-% just add someting to try
 %liu@0809: mean image data
 conf_proposal.mean_image = single(net.meta.normalization.averageImage);  %1x1x3 array
 conf_proposal.image_means = single(net.meta.normalization.averageImage);
