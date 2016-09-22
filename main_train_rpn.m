@@ -64,6 +64,8 @@ else
 	net = rpnInitializeModel();
 end
 
+
+% just add someting to try
 %liu@0809: mean image data
 conf_proposal.mean_image = single(net.meta.normalization.averageImage);  %1x1x3 array
 conf_proposal.image_means = single(net.meta.normalization.averageImage);
